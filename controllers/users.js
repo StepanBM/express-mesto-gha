@@ -7,10 +7,6 @@ const getUsersAll = (req, res) => {
 };
 
 const addUser = (req, res) => {
-  if (!req.body.name || !req.body.about || !req.body.avatar) {
-    res.status(400).send({ message: 'Нет нужных полей' });
-    return;
-  }
   const user = {
     name: req.body.name,
     about: req.body.about,
@@ -18,14 +14,26 @@ const addUser = (req, res) => {
   };
   User.create(user)
     .then(() => res.status(200).send('Ok'))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
 const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .then((user) => res.status(200).send(user))
-    .catch(() => res.status(404).send({ message: 'Пользователя не существует' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
 const updateUserInfo = (req, res) => {
@@ -35,20 +43,32 @@ const updateUserInfo = (req, res) => {
   };
   User.findByIdAndUpdate(req.user._id, userInfo, { new: true, runValidators: true })
     .then((users) => res.status(200).send(users))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
 const updateUserAvatar = (req, res) => {
-  if (!req.body.avatar) {
-    res.status(400).send({ message: 'Нет нужных полей' });
-    return;
-  }
   const userAvatar = {
     avatar: req.body.avatar,
   };
   User.findByIdAndUpdate(req.user._id, userAvatar, { new: true, runValidators: true })
     .then((users) => res.status(200).send(users))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
 module.exports = {
