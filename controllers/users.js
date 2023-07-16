@@ -3,7 +3,13 @@ const User = require('../models/user');
 const getUsersAll = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
 const addUser = (req, res) => {
@@ -11,6 +17,7 @@ const addUser = (req, res) => {
     name: req.body.name,
     about: req.body.about,
     avatar: req.body.avatar,
+    _id: req.body._id,
   };
   User.create(user)
     .then(() => res.status(200).send(user))
