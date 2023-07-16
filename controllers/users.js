@@ -13,7 +13,7 @@ const addUser = (req, res) => {
     avatar: req.body.avatar,
   };
   User.create(user)
-    .then(() => res.status(200).send('Ok'))
+    .then(() => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });

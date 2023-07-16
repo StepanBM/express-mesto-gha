@@ -13,7 +13,7 @@ const addCard = (req, res) => {
     owner: req.user._id,
   };
   Cards.create(card)
-    .then(() => res.status(200).send())
+    .then(() => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
