@@ -69,7 +69,7 @@ const removeLikeCard = (req, res) => {
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        return res.status(400).send({ message: 'Пользователь по указанному _id не найден' });
+        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
       }
       return res.status(200).send(card);
     })
