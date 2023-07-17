@@ -2,18 +2,8 @@ const Cards = require('../models/card');
 
 const getCards = (req, res) => {
   Cards.find({})
-    .then((cards) => {
-      if (!cards) {
-        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
-      }
-      return res.status(200).send(cards);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
-    });
+    .then((cards) => res.status(200).send(cards))
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
 const addCard = (req, res) => {
@@ -37,11 +27,16 @@ const removeCard = (req, res) => {
   Cards.findByIdAndRemove(cardId)
     .then((data) => {
       if (!data) {
-        res.status(404).send({ message: 'Карточки не существует' });
+        return res.status(404).send({ message: 'Карточки не существует' });
       }
-      res.status(200).send(data);
+      return res.status(200).send(data);
     })
-    .catch(() => res.status(400).send({ message: 'Переданы некорректные данные' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Некорректный _id' });
+      }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const addLikeCard = (req, res) => {
@@ -54,11 +49,8 @@ const addLikeCard = (req, res) => {
       return res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
-      }
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Карточка по указанному _id не найден' });
+        return res.status(400).send({ message: 'Некорректный _id' });
       }
       return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
@@ -74,11 +66,8 @@ const removeLikeCard = (req, res) => {
       return res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
-      }
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Пользователь по указанному _id не найден' });
+        return res.status(400).send({ message: 'Некорректный _id' });
       }
       return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
