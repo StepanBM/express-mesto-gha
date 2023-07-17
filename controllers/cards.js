@@ -47,13 +47,18 @@ const removeCard = (req, res) => {
 const addLikeCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(404).send({ message: 'Карточка по указанному _id не найден' });
+      }
+      return res.status(200).send(card);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: 'Карточка по указанному _id не найден' });
+        return res.status(400).send({ message: 'Карточка по указанному _id не найден' });
       }
       return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
@@ -62,13 +67,18 @@ const addLikeCard = (req, res) => {
 const removeLikeCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(400).send({ message: 'Пользователь по указанному _id не найден' });
+      }
+      return res.status(200).send(card);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+        return res.status(400).send({ message: 'Пользователь по указанному _id не найден' });
       }
       return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
