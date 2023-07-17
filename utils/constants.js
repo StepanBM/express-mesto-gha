@@ -1,0 +1,5 @@
+const INCORRECT_DATA = 400;
+const NOT_DATA = 404;
+const SERVER_ERROR = 500;
+
+module.exports = { INCORRECT_DATA, NOT_DATA, SERVER_ERROR };
