@@ -28,6 +28,10 @@ app.use((req, res, next) => {
 app.use('/users', userRoutes);
 app.use('/cards', cardsRoutes);
 
+app.use('', (req, res) => {
+  res.status(404).send({ message: 'Данного пути не существует' });
+});
+
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   // console.log(`App listening on port ${PORT}`);
