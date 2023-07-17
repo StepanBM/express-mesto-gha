@@ -2,13 +2,17 @@ const Cards = require('../models/card');
 
 const getCards = (req, res) => {
   Cards.find({})
-    .then((cards) => res.status(200).send(cards))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
-      } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
+    .then((cards) => {
+      if (!cards) {
+        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
       }
+      return res.status(200).send(cards);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -23,10 +27,9 @@ const addCard = (req, res) => {
     .then(() => res.status(200).send())
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
-      } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
+        return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -40,30 +43,34 @@ const removeCard = (req, res) => {
 const addLikeCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then(() => res.status(200).send())
+    .then((cards) => {
+      if (!cards) {
+        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+      }
+      return res.status(200).send(cards);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
-      } else if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
-      } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
+        return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
 const removeLikeCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then(() => res.status(200).send())
+    .then((cards) => {
+      if (!cards) {
+        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+      }
+      return res.status(200).send(cards);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
-      } else if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
-      } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
+        return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
