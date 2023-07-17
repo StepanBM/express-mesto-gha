@@ -21,10 +21,9 @@ const addCard = (req, res) => {
     name: req.body.name,
     link: req.body.link,
     owner: req.user.owner,
-    _id: req.user._id,
   };
   Cards.create(card)
-    .then(() => res.status(200).send())
+    .then(() => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' });
@@ -43,11 +42,11 @@ const removeCard = (req, res) => {
 const addLikeCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((cards) => {
-      if (!cards) {
+    .then((card) => {
+      if (!card) {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      return res.status(200).send(cards);
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -60,11 +59,11 @@ const addLikeCard = (req, res) => {
 const removeLikeCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((cards) => {
-      if (!cards) {
+    .then((card) => {
+      if (!card) {
         return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      return res.status(200).send(cards);
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
