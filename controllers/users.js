@@ -3,13 +3,7 @@ const User = require('../models/user');
 const getUsersAll = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
-      } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
 const addUser = (req, res) => {
@@ -20,7 +14,7 @@ const addUser = (req, res) => {
     _id: req.body._id,
   };
   User.create(user)
-    .then(() => res.status(200).send(user))
+    .then(() => res.status(200).send())
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
@@ -49,7 +43,7 @@ const updateUserInfo = (req, res) => {
     about: req.body.about,
   };
   User.findByIdAndUpdate(req.user._id, userInfo, { new: true, runValidators: true })
-    .then((users) => res.status(200).send(users))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });

@@ -20,7 +20,7 @@ const addCard = (req, res) => {
     _id: req.user._id,
   };
   Cards.create(card)
-    .then(() => res.status(200).send(card))
+    .then(() => res.status(200).send())
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
@@ -40,7 +40,7 @@ const removeCard = (req, res) => {
 const addLikeCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((cards) => res.status(200).send(cards))
+    .then(() => res.status(200).send())
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
@@ -55,7 +55,7 @@ const addLikeCard = (req, res) => {
 const removeLikeCard = (req, res) => {
   const { cardId } = req.params;
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((cards) => res.status(200).send(cards))
+    .then(() => res.status(200).send())
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
