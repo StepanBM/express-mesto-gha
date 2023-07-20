@@ -11,7 +11,7 @@ const { auth } = require('./middlewares/auth');
 
 const { login, addUser } = require('./controllers/users');
 
-const { validatorLogin } = require('./middlewares/validator');
+const { validatorLogin, validatorAddUser } = require('./middlewares/validator');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/signin', validatorLogin, login);
-app.post('/signup', addUser);
+app.post('/signup', validatorAddUser, addUser);
 
 app.use(auth);
 
@@ -36,6 +36,7 @@ app.use('', (req, res) => {
 });
 
 app.use((error, req, res, next) => {
+  console.log(`Произошла ошибка ${error.statusCode}, ${error.message}`);
   // Установка кода состояния ответа
   res.status(error.statusCode);
 
