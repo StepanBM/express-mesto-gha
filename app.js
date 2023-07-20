@@ -35,6 +35,15 @@ app.use('', (req, res) => {
   res.status(404).send({ message: 'Данного пути не существует' });
 });
 
+app.use((error, req, res, next) => {
+  // Установка кода состояния ответа
+  res.status(error.statusCode);
+
+  // Отправка ответа
+  res.json({ message: error.message });
+  next();
+});
+
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   // console.log(`App listening on port ${PORT}`);
