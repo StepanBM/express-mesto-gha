@@ -45,9 +45,9 @@ const addUser = (req, res, next) => {
         .then((data) => res.status(200).send(data))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(new IncorrectDataError('Переданы некорректные данные'));
+            throw new IncorrectDataError('Переданы некорректные данные');
           } else if (err.code === 11000) {
-            next(new EmailExistsError('Пользователь с таким email уже существует'));
+            throw new EmailExistsError('Пользователь с таким email уже существует');
           }
         });
     })
