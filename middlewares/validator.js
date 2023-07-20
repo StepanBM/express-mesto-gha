@@ -5,7 +5,7 @@ const validatorLogin = celebrate({
     email:
     Joi.string().required().email(),
     password:
-    Joi.string(),
+    Joi.string().required(),
   }),
 });
 
