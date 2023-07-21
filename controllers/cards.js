@@ -36,7 +36,7 @@ const removeCard = (req, res, next) => {
         throw new NotDataError('Карточки с данным _id несуществует');
       }
       if (!data.owner.equals(req.user._id)) {
-        next(new NotRightsError('Вы не можите удалить данную карточку'));
+        throw new NotRightsError('Вы не можите удалить данную карточку');
       }
       return Cards.deleteOne(data)
         .then(() => res.status(200).send({ message: 'Карточка удалена' }));
