@@ -21,8 +21,9 @@ const addCard = (req, res, next) => {
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new IncorrectDataError('Переданы некорректные данные');
+        next(new IncorrectDataError('Переданы некорректные данные'));
       }
+      next(err);
     })
     .catch(next);
 };
@@ -57,6 +58,7 @@ const addLikeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new IncorrectDataError('Некорректный _id'));
       }
+      next(err);
     })
     .catch(next);
 };
@@ -75,6 +77,7 @@ const removeLikeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new IncorrectDataError('Некорректный _id'));
       }
+      next(err);
     })
     .catch(next);
 };

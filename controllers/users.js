@@ -50,6 +50,7 @@ const addUser = (req, res, next) => {
           } else if (err.code === 11000) {
             next(new EmailExistsError('Пользователь с таким email уже существует'));
           }
+          next(err);
         });
     })
     .catch(next);
@@ -69,6 +70,7 @@ const getUser = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new IncorrectDataError('Некорректный _id'));
       }
+      next(err);
     })
     .catch(next);
 };
@@ -87,8 +89,9 @@ const updateUserInfo = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new IncorrectDataError('Переданы некорректные данные');
+        next(new IncorrectDataError('Переданы некорректные данные'));
       }
+      next(err);
     })
     .catch(next);
 };
@@ -106,7 +109,7 @@ const updateUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new IncorrectDataError('Переданы некорректные данные');
+        next(new IncorrectDataError('Переданы некорректные данные'));
       }
     })
     .catch(next);
