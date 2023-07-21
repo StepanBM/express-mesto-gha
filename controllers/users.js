@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NotDataError = require('../errors/NotDataError');
 const IncorrectDataError = require('../errors/IncorrectDataError');
 const EmailExistsError = require('../errors/EmailExistsError');
+const AuthorizationError = require('../errors/AuthorizationError');
 
 const getUsersAll = (req, res, next) => {
   User.find({})
@@ -17,16 +18,15 @@ const getUserMe = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new NotDataError('Пользователь по указанному _id не найден');
+        next(new NotDataError('Пользователь по указанному _id не найден'));
       }
       return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new IncorrectDataError('Некорректный _id');
+        next(new IncorrectDataError('Некорректный _id'));
       }
-    })
-    .catch(next);
+    });
 };
 
 const addUser = (req, res, next) => {
@@ -116,13 +116,16 @@ const updateUserAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findUserByCredentials(email, password);
-  // Создадим токен
-  return User.findOne({ email }).select('+password')
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      // Вернём токен
-      res.status(200).send({ token });
+  User.findUserByCredentials(email, password)
+    .then(() => {
+      // Создадим токен
+      User.findOne({ email }).select('+password')
+        .then((user) => {
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          // Вернём токен
+          res.status(200).send({ token });
+        });
+      next(new AuthorizationError('Некорректные данные'));
     })
     .catch(next);
 };
