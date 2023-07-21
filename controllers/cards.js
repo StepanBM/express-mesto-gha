@@ -21,7 +21,7 @@ const addCard = (req, res, next) => {
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new NotDataError('Переданы некорректные данные');
+        throw new IncorrectDataError('Переданы некорректные данные');
       }
     })
     .catch(next);
@@ -38,7 +38,7 @@ const removeCard = (req, res, next) => {
         next(new NotRightsError('Вы не можите удалить данную карточку'));
       }
       Cards.findByIdAndRemove(cardId)
-        .then(() => next(res.status(200).send('Карточка удалена')));
+        .then(() => res.status(200).send({ message: 'Карточка удалена' }));
     })
     .catch(next);
 };
@@ -50,7 +50,7 @@ const addLikeCard = (req, res, next) => {
       if (!card) {
         next(new NotDataError('Карточка по указанному _id не найден'));
       }
-      next(res.status(200).send(card));
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -67,7 +67,7 @@ const removeLikeCard = (req, res, next) => {
       if (!card) {
         next(new NotDataError('Карточка по указанному _id не найден'));
       }
-      next(res.status(200).send(card));
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
