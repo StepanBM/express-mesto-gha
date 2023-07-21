@@ -37,7 +37,7 @@ const removeCard = (req, res, next) => {
       if (!data.owner.equals(req.user._id)) {
         next(new NotRightsError('Вы не можите удалить данную карточку'));
       }
-      return Cards.deleteOne(cardId)
+      return Cards.deleteOne(data)
         .then(() => res.status(200).send({ message: 'Карточка удалена' }));
     })
     .catch(next);
