@@ -113,7 +113,7 @@ const updateUserAvatar = (req, res, next) => {
     .catch(next);
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
@@ -127,11 +127,11 @@ const login = (req, res) => {
             res.status(200).send({ token });
           });
       } else {
-        throw new AuthorizationError('Некорректные данные');
+        next(new AuthorizationError('Некорректные данные'));
       }
     })
     .catch(() => {
-      throw new AuthorizationError('Некорректные данные');
+      next(new AuthorizationError('Некорректные данные'));
     });
 };
 
