@@ -32,12 +32,12 @@ const removeCard = (req, res, next) => {
   Cards.findById(cardId)
     .then((data) => {
       if (!data) {
-        next(new NotDataError('Карточки с данным _id несуществует'));
+        throw new NotDataError('Карточки с данным _id несуществует');
       }
       if (!data.owner.equals(req.user._id)) {
         next(new NotRightsError('Вы не можите удалить данную карточку'));
       }
-      Cards.findByIdAndRemove(cardId)
+      return Cards.deleteOne(cardId)
         .then(() => res.status(200).send({ message: 'Карточка удалена' }));
     })
     .catch(next);
