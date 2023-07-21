@@ -22,10 +22,11 @@ const getUserMe = (req, res, next) => {
       return res.status(200).send(user);
     })
     .catch((err) => {
-      next(new IncorrectDataError('Некорректный _id'));
+      if (err.name === 'ValidationError') {
+        next(new IncorrectDataError('Некорректный _id'));
+      }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 const addUser = (req, res, next) => {
