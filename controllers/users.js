@@ -5,7 +5,6 @@ const User = require('../models/user');
 const NotDataError = require('../errors/NotDataError');
 const IncorrectDataError = require('../errors/IncorrectDataError');
 const EmailExistsError = require('../errors/EmailExistsError');
-// const AuthorizationError = require('../errors/AuthorizationError');
 
 const getUsersAll = (req, res, next) => {
   User.find({})
@@ -18,14 +17,13 @@ const getUserMe = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        next(new NotDataError('Пользователь по указанному _id не найден'));
+        throw new NotDataError('Пользователь по указанному _id не найден');
       }
       return res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new IncorrectDataError('Некорректный _id'));
-      }
+      next(new IncorrectDataError('Некорректный _id'));
+      next(err);
     })
     .catch(next);
 };
