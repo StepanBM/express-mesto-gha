@@ -43,7 +43,11 @@ const addUser = (req, res, next) => {
     .then((hash) => {
       user.password = hash;
       User.create(user)
-        .then((data) => res.status(200).send(data))
+      // delete user[password];
+        .then(() => {
+          delete user.password;
+          res.status(200).send(user);
+        })
         .catch((err) => {
           if (err.name === 'ValidationError') {
             next(new IncorrectDataError('Переданы некорректные данные'));
