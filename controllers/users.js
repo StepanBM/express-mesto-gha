@@ -14,7 +14,7 @@ const getUsersAll = (req, res, next) => {
 
 const getUserMe = (req, res, next) => {
   const userId = req.user._id;
-  console.log(req.user);
+  console.log(userId);
   User.findById(userId)
     .then((user) => {
       if (!user) {
@@ -59,13 +59,13 @@ const getUser = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new NotDataError('Пользователь по указанному _id не найден');
+        next(new NotDataError('Пользователь по указанному _id не найден'));
       }
       return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new IncorrectDataError('Некорректный _id');
+        next(new IncorrectDataError('Некорректный _id'));
       }
     })
     .catch(next);
