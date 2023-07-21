@@ -43,7 +43,7 @@ const validatorUpdateAvatar = celebrate({
 const validatorUserId = celebrate({
   params: Joi.object().keys({
     userId:
-    Joi.string().required().length(24),
+    Joi.string().required().length(24).uuid(),
   }),
 });
 
