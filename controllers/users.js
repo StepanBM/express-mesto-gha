@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NotDataError = require('../errors/NotDataError');
 const IncorrectDataError = require('../errors/IncorrectDataError');
 const EmailExistsError = require('../errors/EmailExistsError');
+const AuthorizationError = require('../errors/AuthorizationError');
 
 const getUsersAll = (req, res, next) => {
   User.find({})
@@ -61,7 +62,7 @@ const getUser = (req, res, next) => {
     .then((user) => {
       console.log(user);
       if (!user) {
-        throw NotDataError('Пользователь по указанному _id не найден');
+        throw new NotDataError('Пользователь по указанному _id не найден');
       }
       return res.status(200).send(user);
     })
@@ -119,18 +120,18 @@ const login = (req, res) => {
     .then((check) => {
       if (check) {
       // Создадим токен
-        User.findOne({ email })
+        User.findOne({ email }).select('+password')
           .then((user) => {
             const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
             // Вернём токен
             res.status(200).send({ token });
           });
       } else {
-        res.status(401).send({ message: 'Некорректные данные' });
+        throw new AuthorizationError('Некорректные данные');
       }
     })
     .catch(() => {
-      res.status(401).send({ message: 'Некорректные данные' });
+      throw new AuthorizationError('Некорректные данные');
     });
 };
 

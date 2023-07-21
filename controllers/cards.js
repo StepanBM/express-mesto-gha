@@ -2,7 +2,8 @@ const Cards = require('../models/card');
 
 const NotDataError = require('../errors/NotDataError');
 const IncorrectDataError = require('../errors/IncorrectDataError');
-const AuthorizationError = require('../errors/AuthorizationError');
+// const AuthorizationError = require('../errors/AuthorizationError');
+const NotRightsError = require('../errors/NotRightsError');
 
 const getCards = (req, res, next) => {
   Cards.find({})
@@ -28,14 +29,13 @@ const addCard = (req, res, next) => {
 
 const removeCard = (req, res, next) => {
   const { cardId } = req.params;
-  console.log(cardId);
   Cards.findById(cardId)
     .then((data) => {
       if (!data) {
-        throw new AuthorizationError('Карточки с данным _id несуществует');
+        throw new IncorrectDataError('Карточки с данным _id несуществует');
       }
       if (!data.owner.equals(req.user._id)) {
-        throw new AuthorizationError('Вы не можите удалить данную карточку');
+        throw new NotRightsError('Вы не можите удалить данную карточку');
       }
       Cards.findByIdAndRemove(cardId)
         .then(() => res.status(200).send({ message: 'Карточка удалена' }));
