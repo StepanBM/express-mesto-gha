@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true,
     validate: [
-      (email) => /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email),
+      (email) => /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email),
       'Некорректная ссылка',
     ],
   },
