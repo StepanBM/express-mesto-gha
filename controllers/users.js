@@ -5,7 +5,7 @@ const User = require('../models/user');
 const NotDataError = require('../errors/NotDataError');
 const IncorrectDataError = require('../errors/IncorrectDataError');
 const EmailExistsError = require('../errors/EmailExistsError');
-const AuthorizationError = require('../errors/AuthorizationError');
+// const AuthorizationError = require('../errors/AuthorizationError');
 
 const getUsersAll = (req, res, next) => {
   User.find({})
@@ -118,22 +118,16 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
-    .then((check) => {
-      if (check) {
+    .then(() => {
       // Создадим токен
-        User.findOne({ email }).select('+password')
-          .then((user) => {
-            const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-            // Вернём токен
-            res.status(200).send({ token });
-          });
-      } else {
-        next(new AuthorizationError('Некорректные данные'));
-      }
+      User.findOne({ email }).select('+password')
+        .then((user) => {
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          // Вернём токен
+          res.status(200).send({ token });
+        });
     })
-    .catch(() => {
-      next(new AuthorizationError('Некорректные данные'));
-    });
+    .catch(next);
 };
 
 module.exports = {
