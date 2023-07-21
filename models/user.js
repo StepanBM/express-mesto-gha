@@ -27,10 +27,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
-    validate: [
-      (email) => /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email),
-      'Некорректная ссылка',
-    ],
   },
   password: {
     type: String,

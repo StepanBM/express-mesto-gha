@@ -26,7 +26,8 @@ const getUserMe = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new IncorrectDataError('Некорректный _id'));
       }
-    });
+    })
+    .catch(next);
 };
 
 const addUser = (req, res, next) => {
@@ -117,14 +118,20 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
-    .then(() => {
+    .then((check) => {
+      if (check) {
       // Создадим токен
-      User.findOne({ email }).select('+password')
-        .then((user) => {
-          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-          // Вернём токен
-          res.status(200).send({ token });
-        });
+        User.findOne({ email }).select('+password')
+          .then((user) => {
+            const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+            // Вернём токен
+            res.status(200).send({ token });
+          });
+      } else {
+        next(new AuthorizationError('Некорректные данные'));
+      }
+    })
+    .catch(() => {
       next(new AuthorizationError('Некорректные данные'));
     });
 };
