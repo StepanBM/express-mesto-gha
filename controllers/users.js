@@ -50,8 +50,9 @@ const addUser = (req, res, next) => {
             next(new IncorrectDataError('Переданы некорректные данные'));
           } else if (err.code === 11000) {
             next(new EmailExistsError('Пользователь с таким email уже существует'));
+          } else {
+            next(err);
           }
-          next(err);
         });
     })
     .catch(next);
@@ -70,10 +71,10 @@ const getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new IncorrectDataError('Некорректный _id'));
+        return;
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 const updateUserInfo = (req, res, next) => {
@@ -91,10 +92,10 @@ const updateUserInfo = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new IncorrectDataError('Переданы некорректные данные'));
+        return;
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 const updateUserAvatar = (req, res, next) => {
@@ -111,9 +112,10 @@ const updateUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new IncorrectDataError('Переданы некорректные данные'));
+        return;
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const login = (req, res, next) => {

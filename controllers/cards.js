@@ -22,10 +22,10 @@ const addCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new IncorrectDataError('Переданы некорректные данные'));
+        return;
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 const removeCard = (req, res, next) => {
@@ -57,10 +57,10 @@ const addLikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new IncorrectDataError('Некорректный _id'));
+        return;
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 const removeLikeCard = (req, res, next) => {
@@ -76,10 +76,10 @@ const removeLikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new IncorrectDataError('Некорректный _id'));
+        return;
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports = {
