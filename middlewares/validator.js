@@ -1,14 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
 
-const validatorLogin = celebrate({
-  body: Joi.object().keys({
-    email:
-    Joi.string().required().email(),
-    password:
-    Joi.string().required(),
-  }),
-});
-
 const validatorAddUser = celebrate({
   body: Joi.object().keys({
     name:
@@ -20,7 +11,7 @@ const validatorAddUser = celebrate({
     email:
     Joi.string().required().email(),
     password:
-    Joi.string(),
+    Joi.string().required(),
   }),
 });
 
@@ -59,16 +50,25 @@ const validatorAddCard = celebrate({
     name:
     Joi.string().min(2).max(30).required(),
     link:
-    Joi.string().required().uri(),
+    Joi.string().required().regex(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/),
+  }),
+});
+
+const validatorLogin = celebrate({
+  body: Joi.object().keys({
+    email:
+    Joi.string().required().email(),
+    password:
+    Joi.string().required(),
   }),
 });
 
 module.exports = {
-  validatorLogin,
   validatorAddUser,
   validatorUpdateUser,
   validatorUpdateAvatar,
   validatorUserId,
   validatorCardId,
   validatorAddCard,
+  validatorLogin,
 };
