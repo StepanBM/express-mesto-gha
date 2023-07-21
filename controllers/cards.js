@@ -49,8 +49,9 @@ const addLikeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotDataError('Карточка по указанному _id не найден'));
+      } else {
+        next(res.status(200).send(card));
       }
-      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -65,9 +66,10 @@ const removeLikeCard = (req, res, next) => {
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        next(new NotDataError('Карточка по указанному _id не найден'));
+        throw new NotDataError('Карточка по указанному _id не найден');
+      } else {
+        next(res.status(200).send(card));
       }
-      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
