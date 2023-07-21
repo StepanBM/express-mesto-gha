@@ -32,14 +32,13 @@ app.use(auth);
 app.use('/users', userRoutes);
 app.use('/cards', cardsRoutes);
 app.use(errors());
+app.use('', (req, res, next) => {
+  next(new NotDataError('Данного пути не существует'));
+});
 app.use(serverError);
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
-});
-
-app.use('', (req, res, next) => {
-  next(new NotDataError('Данного пути не существует'));
 });
 
 app.listen(PORT, () => {

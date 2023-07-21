@@ -56,16 +56,18 @@ const addUser = (req, res, next) => {
 
 const getUser = (req, res, next) => {
   const { userId } = req.params;
+  console.log(userId);
   User.findById(userId)
     .then((user) => {
+      console.log(user);
       if (!user) {
-        next(new NotDataError('Пользователь по указанному _id не найден'));
+        throw NotDataError('Пользователь по указанному _id не найден');
       }
       return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new IncorrectDataError('Некорректный _id'));
+        throw new IncorrectDataError('Некорректный _id');
       }
     })
     .catch(next);

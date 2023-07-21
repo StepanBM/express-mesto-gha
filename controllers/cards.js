@@ -48,13 +48,13 @@ const addLikeCard = (req, res, next) => {
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        throw new NotDataError('Карточка по указанному _id не найден');
+        next(new NotDataError('Карточка по указанному _id не найден'));
       }
       return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new IncorrectDataError('Некорректный _id');
+        next(new IncorrectDataError('Некорректный _id'));
       }
     })
     .catch(next);
@@ -65,13 +65,13 @@ const removeLikeCard = (req, res, next) => {
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        throw new NotDataError('Карточка по указанному _id не найден');
+        next(new NotDataError('Карточка по указанному _id не найден'));
       }
       return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new IncorrectDataError('Некорректный _id');
+        next(new IncorrectDataError('Некорректный _id'));
       }
     })
     .catch(next);
