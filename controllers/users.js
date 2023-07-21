@@ -62,13 +62,14 @@ const getUser = (req, res, next) => {
     .then((user) => {
       console.log(user);
       if (!user) {
-        throw new NotDataError('Пользователь по указанному _id не найден');
+        next(new NotDataError('Пользователь по указанному _id не найден'));
+      } else {
+        next(res.status(200).send(user));
       }
-      return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new IncorrectDataError('Некорректный _id');
+        next(new IncorrectDataError('Некорректный _id'));
       }
     })
     .catch(next);
