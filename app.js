@@ -19,7 +19,7 @@ const serverError = require('./errors/ServerError');
 
 const NotDataError = require('./errors/NotDataError');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 80 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());
