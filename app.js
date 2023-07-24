@@ -26,8 +26,8 @@ const app = express();
 const allowedCors = [
   'https://praktikum.tk',
   'http://praktikum.tk',
-  'https://api.mestostepan.nomoredomains.xyz',
-  'http://api.mestostepan.nomoredomains.xyz',
+  'https://mestostepan.nomoredomains.xyz',
+  'http://mestostepan.nomoredomains.xyz',
   'localhost:3000',
 ];
 
